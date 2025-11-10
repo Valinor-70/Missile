@@ -1,0 +1,9 @@
+name,lat,lng,radius_km,event_type
+New York Demo,40.7128,-74.0060,5,Nuclear
+Los Angeles Demo,34.0522,-118.2437,3,Conventional
+Chicago Demo,41.8781,-87.6298,4,Thermonuclear
+London Demo,51.5074,-0.1278,6,Nuclear
+Tokyo Demo,35.6762,139.6503,8,Thermonuclear
+Sydney Demo,-33.8688,151.2093,2,Conventional
+Paris Demo,48.8566,2.3522,5,Nuclear
+Berlin Demo,52.5200,13.4050,4,Conventional
