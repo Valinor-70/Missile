@@ -1,0 +1,69 @@
+Create a C# Windows Forms educational application that demonstrates mapping, geodesic math, AES encryption, authentication, selectable event profiles, and animated UI effects. Do not model or reference weapons or real-world targeting. Use neutral, safe event types (meteor, volcanic eruption, simulated emergency drill, fireworks display) instead.
+
+Requirements:
+
+Map
+
+Use GMap.NET with OpenStreetMap tiles.
+
+Provide a GMapControl filling most of the window and a right-side control panel for inputs and controls.
+
+Allow the user to enter latitude, longitude, and radius (km) and plot a marker and a geodesic circle (polygon) around the point. Use a destination-point formula for correct geodesic circles.
+
+Support loading multiple event points from a CSV (columns: name,lat,lng,radius_km,event_type) and display them with clustering or overlays.
+
+Selectable Items
+
+Provide a dropdown of missiles: Conventional, Nuclear, Thermonuclear, and Thaumonuclear
+
+Each profile has different visual parameters (inner-impact radius, outer-effect radius, color, opacity, label) to demonstrate drawing concentric circles and polygons.
+
+Choosing a profile updates the preview and legend immediately.
+
+Authentication (Backend separate, however not connecting to REAL SYSTEMS!
+
+Add a login dialog requiring: Operator ID (text) and Passphrase (text). Example allowed Operator IDs: O5-X, Ethics Committee: Passphrase HandofDemocracy (for demonstration only). The app should not perform any real-world access control — this is a UI mock that demonstrates protected flows.
+
+After successful login, enable the main controls and store a session token in memory.
+
+Authentication should validate by checking a hashed secret derived from the passphrase using PBKDF2 (salted) — this demonstrates secure password handling.
+
+Encryption Demo (AES)
+
+Before "activating" a simulated event, encrypt a small JSON payload (e.g., { "operator":"O5-X", "event":"Nuclear", "coords":[lat,lng], "radius_km":5 }) using AES-GCM or AES-CBC+HMAC.
+After Selection return a random Missile ID (TYPE-LAT*LONG) Requiring an authentication code in the form of XXX-XX-XXX (out of a selection Generated in file Auth Codes.txt)
+
+The encryption key should be derived from a numerical numeric-code input (a “simulation code”) using a KDF (PBKDF2) with salt. Show the encrypted blob as Base64 in a read-only textbox, and provide a Decrypt button that requires a second secret code (a separate random one) to decrypt the payload — this shows key derivation and authenticated decryption.
+
+Handle encryption/decryption errors gracefully and explain them in the UI.
+
+Center Key Control (safe simulation)
+
+Place a large, stylized “Control Key” widget in the map center area of the UI (an interactive circular control).
+
+Turning the key (drag/click rotation) visually animates the key and will trigger a safe simulated activation (e.g., produce a colorful pulse animation on the plotted circle and display an “Activation Logged” message). No real-world launching or harm-related actions.
+
+Require: user must be authenticated AND the correct pair of codes (encryption key + decryption key) must match to enable turning the key.
+
+Cool UI Effects
+
+Animated pulsing circle (scale or opacity animation) to represent the different event zones (EG FALLOUT, 10PSI Overpressure.
+
+Smooth marker drop animation and an expanding ripple when an event is activated.
+
+A small timeline/console area that logs user actions (login time, encryption time, activation attempts) with timestamps.
+
+Use lightweight animations (timers, easing) appropriate for WinForms.
+
+Safety & Educational Messaging
+
+Prominently display an educational disclaimer: “This is a safe simulation for learning mapping, cryptography, and UI — not intended for planning or enabling any harmful activity.” in text box before UI start
+
+Include comments in the code explaining which parts are purely educational and why certain cryptographic choices are used.
+
+Output
+
+Produce a single ready-to-run .cs file or a small set of files (e.g., Program.cs, MainForm.cs, AuthForm.cs, CryptoHelper.cs) with clear instructions to compile under .NET 6+ or .NET 7.
+
+Include inline comments and a small README section at top explaining how to run the demo and what each feature teaches.
+There must be functionality that models weapon selection, impact/fallout, launch authentication, or launch mechanisms. 
