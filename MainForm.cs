@@ -88,8 +88,10 @@ namespace MissileSimulator
             InitializeComponent();
             InitializeMap();
             
+            // Log after all UI components are initialized
             LogToConsole($"System initialized. Operator: {operatorId}");
-            LogToConsole($"Session token: {sessionToken.Substring(0, 8)}...");
+            LogToConsole($"Session: {sessionToken.Substring(0, 8)}...");
+            LogToConsole("Authentication codes generated: AuthCodes.txt");
         }
         
         private void InitializeEventProfiles()
@@ -148,23 +150,23 @@ namespace MissileSimulator
                 validAuthCodes.Add(CryptoHelper.GenerateAuthCode());
             }
             
-            // Save to file
+            // Save to file (logging happens after UI initialization)
             try
             {
                 File.WriteAllLines("AuthCodes.txt", validAuthCodes);
-                LogToConsole("Authentication codes generated: AuthCodes.txt");
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                LogToConsole($"Warning: Could not save auth codes: {ex.Message}");
+                // Will log error after UI is initialized
             }
         }
         
         private void InitializeComponent()
         {
-            this.Text = "Missile Simulator - Educational Mapping & Cryptography Demo";
+            this.Text = "Missile Simulator";
             this.Size = new Size(1400, 900);
             this.StartPosition = FormStartPosition.CenterScreen;
+            this.BackColor = Color.FromArgb(20, 20, 30); // Dark theme
             
             // Map control (fills most of the window)
             mapControl = new GMapControl
@@ -174,13 +176,13 @@ namespace MissileSimulator
                 Dock = DockStyle.None
             };
             
-            // Control panel on the right
+            // Control panel on the right with modern dark theme
             controlPanel = new Panel
             {
                 Location = new Point(1000, 0),
                 Size = new Size(384, 850),
-                BackColor = Color.LightGray,
-                BorderStyle = BorderStyle.FixedSingle,
+                BackColor = Color.FromArgb(30, 30, 40),
+                BorderStyle = BorderStyle.None,
                 AutoScroll = true
             };
             
@@ -201,67 +203,162 @@ namespace MissileSimulator
         {
             int y = 10;
             
-            // Title
+            // Modern title with gradient effect
             var lblTitle = new Label
             {
-                Text = "CONTROL PANEL",
-                Font = new Font("Arial", 12, FontStyle.Bold),
+                Text = "◢ CONTROL PANEL ◣",
+                Font = new Font("Segoe UI", 14, FontStyle.Bold),
                 Location = new Point(10, y),
-                Size = new Size(360, 25),
-                TextAlign = ContentAlignment.MiddleCenter
+                Size = new Size(360, 35),
+                TextAlign = ContentAlignment.MiddleCenter,
+                ForeColor = Color.FromArgb(100, 200, 255),
+                BackColor = Color.FromArgb(20, 20, 30)
             };
             controlPanel.Controls.Add(lblTitle);
-            y += 35;
+            y += 45;
             
-            // Event coordinates section
+            // Event coordinates section with modern styling
             var grpCoordinates = new GroupBox
             {
-                Text = "Event Coordinates",
+                Text = "▸ Event Coordinates",
                 Location = new Point(10, y),
-                Size = new Size(360, 150)
+                Size = new Size(360, 160),
+                ForeColor = Color.FromArgb(200, 200, 220),
+                Font = new Font("Segoe UI", 10, FontStyle.Bold)
             };
             
-            grpCoordinates.Controls.Add(new Label { Text = "Latitude:", Location = new Point(10, 25), Size = new Size(80, 20) });
-            txtLatitude = new TextBox { Location = new Point(100, 23), Size = new Size(240, 20), Text = "40.7128" };
+            grpCoordinates.Controls.Add(new Label 
+            { 
+                Text = "Latitude:", 
+                Location = new Point(10, 30), 
+                Size = new Size(80, 20),
+                ForeColor = Color.FromArgb(180, 180, 200),
+                Font = new Font("Segoe UI", 9)
+            });
+            txtLatitude = new TextBox 
+            { 
+                Location = new Point(100, 28), 
+                Size = new Size(240, 23), 
+                Text = "40.7128",
+                BackColor = Color.FromArgb(50, 50, 60),
+                ForeColor = Color.White,
+                Font = new Font("Consolas", 9),
+                BorderStyle = BorderStyle.FixedSingle
+            };
             grpCoordinates.Controls.Add(txtLatitude);
             
-            grpCoordinates.Controls.Add(new Label { Text = "Longitude:", Location = new Point(10, 55), Size = new Size(80, 20) });
-            txtLongitude = new TextBox { Location = new Point(100, 53), Size = new Size(240, 20), Text = "-74.0060" };
+            grpCoordinates.Controls.Add(new Label 
+            { 
+                Text = "Longitude:", 
+                Location = new Point(10, 60), 
+                Size = new Size(80, 20),
+                ForeColor = Color.FromArgb(180, 180, 200),
+                Font = new Font("Segoe UI", 9)
+            });
+            txtLongitude = new TextBox 
+            { 
+                Location = new Point(100, 58), 
+                Size = new Size(240, 23), 
+                Text = "-74.0060",
+                BackColor = Color.FromArgb(50, 50, 60),
+                ForeColor = Color.White,
+                Font = new Font("Consolas", 9),
+                BorderStyle = BorderStyle.FixedSingle
+            };
             grpCoordinates.Controls.Add(txtLongitude);
             
-            grpCoordinates.Controls.Add(new Label { Text = "Radius (km):", Location = new Point(10, 85), Size = new Size(80, 20) });
-            txtRadius = new TextBox { Location = new Point(100, 83), Size = new Size(240, 20), Text = "5" };
+            grpCoordinates.Controls.Add(new Label 
+            { 
+                Text = "Radius (km):", 
+                Location = new Point(10, 90), 
+                Size = new Size(80, 20),
+                ForeColor = Color.FromArgb(180, 180, 200),
+                Font = new Font("Segoe UI", 9)
+            });
+            txtRadius = new TextBox 
+            { 
+                Location = new Point(100, 88), 
+                Size = new Size(240, 23), 
+                Text = "5",
+                BackColor = Color.FromArgb(50, 50, 60),
+                ForeColor = Color.White,
+                Font = new Font("Consolas", 9),
+                BorderStyle = BorderStyle.FixedSingle
+            };
             grpCoordinates.Controls.Add(txtRadius);
             
-            btnPlotEvent = new Button { Text = "Plot Event", Location = new Point(10, 115), Size = new Size(105, 25) };
+            btnPlotEvent = new Button 
+            { 
+                Text = "⊕ Plot Event", 
+                Location = new Point(10, 120), 
+                Size = new Size(105, 30),
+                BackColor = Color.FromArgb(0, 120, 215),
+                ForeColor = Color.White,
+                FlatStyle = FlatStyle.Flat,
+                Font = new Font("Segoe UI", 9, FontStyle.Bold)
+            };
+            btnPlotEvent.FlatAppearance.BorderSize = 0;
             btnPlotEvent.Click += BtnPlotEvent_Click;
             grpCoordinates.Controls.Add(btnPlotEvent);
             
-            btnLoadCSV = new Button { Text = "Load CSV", Location = new Point(125, 115), Size = new Size(105, 25) };
+            btnLoadCSV = new Button 
+            { 
+                Text = "📁 Load CSV", 
+                Location = new Point(125, 120), 
+                Size = new Size(105, 30),
+                BackColor = Color.FromArgb(0, 150, 136),
+                ForeColor = Color.White,
+                FlatStyle = FlatStyle.Flat,
+                Font = new Font("Segoe UI", 9, FontStyle.Bold)
+            };
+            btnLoadCSV.FlatAppearance.BorderSize = 0;
             btnLoadCSV.Click += BtnLoadCSV_Click;
             grpCoordinates.Controls.Add(btnLoadCSV);
             
-            btnClearMap = new Button { Text = "Clear Map", Location = new Point(240, 115), Size = new Size(100, 25) };
+            btnClearMap = new Button 
+            { 
+                Text = "✖ Clear", 
+                Location = new Point(240, 120), 
+                Size = new Size(100, 30),
+                BackColor = Color.FromArgb(180, 50, 50),
+                ForeColor = Color.White,
+                FlatStyle = FlatStyle.Flat,
+                Font = new Font("Segoe UI", 9, FontStyle.Bold)
+            };
+            btnClearMap.FlatAppearance.BorderSize = 0;
             btnClearMap.Click += BtnClearMap_Click;
             grpCoordinates.Controls.Add(btnClearMap);
             
             controlPanel.Controls.Add(grpCoordinates);
-            y += 160;
+            y += 170;
             
-            // Event type selection
+            // Event type selection with modern styling
             var grpEventType = new GroupBox
             {
-                Text = "Event Profile",
+                Text = "▸ Weapon Profile",
                 Location = new Point(10, y),
-                Size = new Size(360, 80)
+                Size = new Size(360, 85),
+                ForeColor = Color.FromArgb(200, 200, 220),
+                Font = new Font("Segoe UI", 10, FontStyle.Bold)
             };
             
-            grpEventType.Controls.Add(new Label { Text = "Type:", Location = new Point(10, 25), Size = new Size(80, 20) });
+            grpEventType.Controls.Add(new Label 
+            { 
+                Text = "Type:", 
+                Location = new Point(10, 30), 
+                Size = new Size(80, 20),
+                ForeColor = Color.FromArgb(180, 180, 200),
+                Font = new Font("Segoe UI", 9)
+            });
             cmbEventType = new ComboBox
             {
-                Location = new Point(100, 23),
-                Size = new Size(240, 20),
-                DropDownStyle = ComboBoxStyle.DropDownList
+                Location = new Point(100, 28),
+                Size = new Size(240, 23),
+                DropDownStyle = ComboBoxStyle.DropDownList,
+                BackColor = Color.FromArgb(50, 50, 60),
+                ForeColor = Color.White,
+                FlatStyle = FlatStyle.Flat,
+                Font = new Font("Segoe UI", 9, FontStyle.Bold)
             };
             cmbEventType.Items.AddRange(new object[] { "Conventional", "Nuclear", "Thermonuclear", "Thaumonuclear" });
             cmbEventType.SelectedIndex = 0;
@@ -270,86 +367,178 @@ namespace MissileSimulator
             
             var lblLegend = new Label
             {
-                Location = new Point(10, 50),
+                Location = new Point(10, 58),
                 Size = new Size(340, 20),
-                Text = "Legend: Impact / Effect Zone",
-                Font = new Font("Arial", 8, FontStyle.Italic)
+                Text = "Impact Zone ◉ Effect Zone",
+                Font = new Font("Segoe UI", 8, FontStyle.Italic),
+                ForeColor = Color.FromArgb(150, 150, 170)
             };
             grpEventType.Controls.Add(lblLegend);
             
             controlPanel.Controls.Add(grpEventType);
-            y += 90;
+            y += 95;
             
-            // Encryption section
+            // Encryption section with modern styling
             var grpEncryption = new GroupBox
             {
-                Text = "Encryption Demo (AES-256)",
+                Text = "▸ AES-256 Encryption",
                 Location = new Point(10, y),
-                Size = new Size(360, 220)
+                Size = new Size(360, 235),
+                ForeColor = Color.FromArgb(200, 200, 220),
+                Font = new Font("Segoe UI", 10, FontStyle.Bold)
             };
             
-            grpEncryption.Controls.Add(new Label { Text = "Encryption Code:", Location = new Point(10, 25), Size = new Size(100, 20) });
-            txtEncryptionCode = new TextBox { Location = new Point(120, 23), Size = new Size(220, 20) };
+            grpEncryption.Controls.Add(new Label 
+            { 
+                Text = "Encryption Code:", 
+                Location = new Point(10, 30), 
+                Size = new Size(110, 20),
+                ForeColor = Color.FromArgb(180, 180, 200),
+                Font = new Font("Segoe UI", 9)
+            });
+            txtEncryptionCode = new TextBox 
+            { 
+                Location = new Point(125, 28), 
+                Size = new Size(215, 23),
+                BackColor = Color.FromArgb(50, 50, 60),
+                ForeColor = Color.FromArgb(100, 255, 100),
+                Font = new Font("Consolas", 9),
+                BorderStyle = BorderStyle.FixedSingle
+            };
             grpEncryption.Controls.Add(txtEncryptionCode);
             
-            btnEncrypt = new Button { Text = "Encrypt Event", Location = new Point(10, 50), Size = new Size(330, 25) };
+            btnEncrypt = new Button 
+            { 
+                Text = "🔒 Encrypt Payload", 
+                Location = new Point(10, 58), 
+                Size = new Size(330, 30),
+                BackColor = Color.FromArgb(156, 39, 176),
+                ForeColor = Color.White,
+                FlatStyle = FlatStyle.Flat,
+                Font = new Font("Segoe UI", 9, FontStyle.Bold)
+            };
+            btnEncrypt.FlatAppearance.BorderSize = 0;
             btnEncrypt.Click += BtnEncrypt_Click;
             grpEncryption.Controls.Add(btnEncrypt);
             
             lblMissileId = new Label
             {
-                Location = new Point(10, 80),
+                Location = new Point(10, 95),
                 Size = new Size(330, 20),
-                Text = "Missile ID: Not Generated",
-                Font = new Font("Arial", 8, FontStyle.Bold)
+                Text = "Missile ID: ⧗ Not Generated",
+                Font = new Font("Consolas", 9, FontStyle.Bold),
+                ForeColor = Color.FromArgb(255, 180, 0)
             };
             grpEncryption.Controls.Add(lblMissileId);
             
-            grpEncryption.Controls.Add(new Label { Text = "Auth Code:", Location = new Point(10, 105), Size = new Size(80, 20) });
-            txtAuthCode = new TextBox { Location = new Point(100, 103), Size = new Size(160, 20) };
+            grpEncryption.Controls.Add(new Label 
+            { 
+                Text = "Auth Code:", 
+                Location = new Point(10, 122), 
+                Size = new Size(80, 20),
+                ForeColor = Color.FromArgb(180, 180, 200),
+                Font = new Font("Segoe UI", 9)
+            });
+            txtAuthCode = new TextBox 
+            { 
+                Location = new Point(95, 120), 
+                Size = new Size(160, 23),
+                BackColor = Color.FromArgb(50, 50, 60),
+                ForeColor = Color.FromArgb(255, 255, 100),
+                Font = new Font("Consolas", 9),
+                BorderStyle = BorderStyle.FixedSingle
+            };
             grpEncryption.Controls.Add(txtAuthCode);
             
-            btnVerifyAuth = new Button { Text = "Verify", Location = new Point(270, 102), Size = new Size(70, 22) };
+            btnVerifyAuth = new Button 
+            { 
+                Text = "✓ Verify", 
+                Location = new Point(265, 119), 
+                Size = new Size(75, 25),
+                BackColor = Color.FromArgb(76, 175, 80),
+                ForeColor = Color.White,
+                FlatStyle = FlatStyle.Flat,
+                Font = new Font("Segoe UI", 9, FontStyle.Bold)
+            };
+            btnVerifyAuth.FlatAppearance.BorderSize = 0;
             btnVerifyAuth.Click += BtnVerifyAuth_Click;
             grpEncryption.Controls.Add(btnVerifyAuth);
             
-            grpEncryption.Controls.Add(new Label { Text = "Encrypted Data:", Location = new Point(10, 130), Size = new Size(100, 20) });
+            grpEncryption.Controls.Add(new Label 
+            { 
+                Text = "Encrypted:", 
+                Location = new Point(10, 152), 
+                Size = new Size(100, 20),
+                ForeColor = Color.FromArgb(180, 180, 200),
+                Font = new Font("Segoe UI", 9)
+            });
             txtEncryptedData = new TextBox
             {
-                Location = new Point(10, 150),
+                Location = new Point(10, 172),
                 Size = new Size(330, 20),
                 ReadOnly = true,
-                BackColor = Color.White
+                BackColor = Color.FromArgb(40, 40, 50),
+                ForeColor = Color.FromArgb(100, 200, 255),
+                Font = new Font("Consolas", 8),
+                BorderStyle = BorderStyle.FixedSingle
             };
             grpEncryption.Controls.Add(txtEncryptedData);
             
-            grpEncryption.Controls.Add(new Label { Text = "Decryption Code:", Location = new Point(10, 175), Size = new Size(100, 20) });
-            txtDecryptionCode = new TextBox { Location = new Point(120, 173), Size = new Size(220, 20) };
+            grpEncryption.Controls.Add(new Label 
+            { 
+                Text = "Decryption Code:", 
+                Location = new Point(10, 198), 
+                Size = new Size(110, 20),
+                ForeColor = Color.FromArgb(180, 180, 200),
+                Font = new Font("Segoe UI", 9)
+            });
+            txtDecryptionCode = new TextBox 
+            { 
+                Location = new Point(125, 196), 
+                Size = new Size(140, 23),
+                BackColor = Color.FromArgb(50, 50, 60),
+                ForeColor = Color.FromArgb(255, 100, 100),
+                Font = new Font("Consolas", 9),
+                BorderStyle = BorderStyle.FixedSingle
+            };
             grpEncryption.Controls.Add(txtDecryptionCode);
             
-            btnDecrypt = new Button { Text = "Decrypt", Location = new Point(10, 195), Size = new Size(330, 20) };
+            btnDecrypt = new Button 
+            { 
+                Text = "🔓 Decrypt", 
+                Location = new Point(275, 195), 
+                Size = new Size(65, 25),
+                BackColor = Color.FromArgb(255, 87, 34),
+                ForeColor = Color.White,
+                FlatStyle = FlatStyle.Flat,
+                Font = new Font("Segoe UI", 9, FontStyle.Bold)
+            };
+            btnDecrypt.FlatAppearance.BorderSize = 0;
             btnDecrypt.Click += BtnDecrypt_Click;
             grpEncryption.Controls.Add(btnDecrypt);
             
             controlPanel.Controls.Add(grpEncryption);
-            y += 230;
+            y += 245;
             
-            // Console/Timeline
+            // Console/Timeline with modern styling
             var grpConsole = new GroupBox
             {
-                Text = "Event Log / Timeline",
+                Text = "▸ Mission Log",
                 Location = new Point(10, y),
-                Size = new Size(360, 200)
+                Size = new Size(360, 210),
+                ForeColor = Color.FromArgb(200, 200, 220),
+                Font = new Font("Segoe UI", 10, FontStyle.Bold)
             };
             
             txtConsole = new RichTextBox
             {
-                Location = new Point(10, 20),
-                Size = new Size(340, 170),
+                Location = new Point(10, 25),
+                Size = new Size(340, 175),
                 ReadOnly = true,
-                BackColor = Color.Black,
-                ForeColor = Color.LimeGreen,
-                Font = new Font("Consolas", 8)
+                BackColor = Color.FromArgb(10, 10, 15),
+                ForeColor = Color.FromArgb(0, 255, 100),
+                Font = new Font("Consolas", 8),
+                BorderStyle = BorderStyle.FixedSingle
             };
             grpConsole.Controls.Add(txtConsole);
             
@@ -675,25 +864,58 @@ namespace MissileSimulator
             int centerX = pnlControlKey.Width / 2;
             int centerY = pnlControlKey.Height / 2;
             
+            // Draw outer glow effect
+            if (keyEnabled)
+            {
+                using (var path = new GraphicsPath())
+                {
+                    path.AddEllipse(centerX - 48, centerY - 48, 96, 96);
+                    using (var pgb = new PathGradientBrush(path))
+                    {
+                        pgb.CenterPoint = new PointF(centerX, centerY);
+                        pgb.CenterColor = Color.FromArgb(80, 0, 255, 0);
+                        pgb.SurroundColors = new[] { Color.Transparent };
+                        g.FillPath(pgb, path);
+                    }
+                }
+            }
+            
             // Save state
             var state = g.Save();
             g.TranslateTransform(centerX, centerY);
             g.RotateTransform(keyRotation);
             
-            // Draw key base (circle)
-            Color keyColor = keyEnabled ? Color.Green : Color.Gray;
-            using (var brush = new SolidBrush(Color.FromArgb(200, keyColor)))
+            // Draw key base (circle) with gradient
+            Color keyColor = keyEnabled ? Color.FromArgb(0, 220, 0) : Color.FromArgb(80, 80, 80);
+            Color keyDark = keyEnabled ? Color.FromArgb(0, 150, 0) : Color.FromArgb(50, 50, 50);
+            
+            using (var brush = new LinearGradientBrush(
+                new Rectangle(-40, -40, 80, 80),
+                keyColor,
+                keyDark,
+                LinearGradientMode.Vertical))
             {
                 g.FillEllipse(brush, -40, -40, 80, 80);
             }
             
-            using (var pen = new Pen(Color.Black, 3))
+            // Draw metallic border
+            using (var pen = new Pen(Color.FromArgb(200, 200, 200), 3))
             {
                 g.DrawEllipse(pen, -40, -40, 80, 80);
             }
             
-            // Draw key handle
-            using (var brush = new SolidBrush(keyColor))
+            // Draw inner circle for depth
+            using (var pen = new Pen(Color.FromArgb(150, 150, 150), 1))
+            {
+                g.DrawEllipse(pen, -35, -35, 70, 70);
+            }
+            
+            // Draw key handle with gradient
+            using (var brush = new LinearGradientBrush(
+                new Rectangle(-5, -30, 10, 60),
+                keyColor,
+                keyDark,
+                LinearGradientMode.Horizontal))
             {
                 g.FillRectangle(brush, -5, -30, 10, 60);
             }
@@ -703,17 +925,38 @@ namespace MissileSimulator
             {
                 g.FillRectangle(brush, -15, 25, 10, 5);
                 g.FillRectangle(brush, 5, 25, 10, 5);
+                g.FillRectangle(brush, -10, 30, 6, 3);
             }
             
             g.Restore(state);
             
-            // Draw label
-            using (var font = new Font("Arial", 8, FontStyle.Bold))
-            using (var brush = new SolidBrush(Color.White))
+            // Draw label with shadow
+            using (var font = new Font("Segoe UI", 9, FontStyle.Bold))
             {
                 string text = keyEnabled ? "ARMED" : "LOCKED";
                 var size = g.MeasureString(text, font);
-                g.DrawString(text, font, brush, centerX - size.Width / 2, centerY - size.Height / 2);
+                
+                // Shadow
+                using (var brush = new SolidBrush(Color.FromArgb(100, 0, 0, 0)))
+                {
+                    g.DrawString(text, font, brush, centerX - size.Width / 2 + 1, centerY - size.Height / 2 + 1);
+                }
+                
+                // Text
+                Color textColor = keyEnabled ? Color.FromArgb(255, 255, 255) : Color.FromArgb(150, 150, 150);
+                using (var brush = new SolidBrush(textColor))
+                {
+                    g.DrawString(text, font, brush, centerX - size.Width / 2, centerY - size.Height / 2);
+                }
+            }
+            
+            // Draw rotation indicator
+            using (var pen = new Pen(Color.FromArgb(200, 255, 255, 0), 2))
+            {
+                float angle = keyRotation * (float)Math.PI / 180f;
+                float x = centerX + 35 * (float)Math.Cos(angle - Math.PI / 2);
+                float y = centerY + 35 * (float)Math.Sin(angle - Math.PI / 2);
+                g.DrawLine(pen, centerX, centerY, x, y);
             }
         }
         
@@ -843,6 +1086,10 @@ namespace MissileSimulator
         
         private void LogToConsole(string message)
         {
+            // Null check to prevent NullReferenceException
+            if (txtConsole == null)
+                return;
+                
             if (txtConsole.InvokeRequired)
             {
                 txtConsole.Invoke(new Action(() => LogToConsole(message)));

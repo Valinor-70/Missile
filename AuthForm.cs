@@ -50,85 +50,103 @@ namespace MissileSimulator
         private void InitializeComponent()
         {
             this.Text = "Authentication - Missile Simulator";
-            this.Size = new Size(400, 280);
+            this.Size = new Size(420, 300);
             this.StartPosition = FormStartPosition.CenterScreen;
             this.FormBorderStyle = FormBorderStyle.FixedDialog;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
+            this.BackColor = Color.FromArgb(30, 30, 40);
             
-            // Title
+            // Title with modern styling
             lblTitle = new Label
             {
-                Text = "SECURE AUTHENTICATION",
-                Font = new Font("Arial", 14, FontStyle.Bold),
-                Location = new Point(20, 20),
-                Size = new Size(360, 30),
+                Text = "🔐 SECURE AUTHENTICATION",
+                Font = new Font("Segoe UI", 16, FontStyle.Bold),
+                Location = new Point(20, 25),
+                Size = new Size(380, 35),
                 TextAlign = ContentAlignment.MiddleCenter,
-                ForeColor = Color.DarkBlue
+                ForeColor = Color.FromArgb(100, 200, 255)
             };
             
-            // Info label
+            // Info label - removed educational mention
             lblInfo = new Label
             {
-                Text = "Educational demo - PBKDF2 password verification",
-                Font = new Font("Arial", 8, FontStyle.Italic),
-                Location = new Point(20, 50),
-                Size = new Size(360, 20),
+                Text = "PBKDF2 password verification (100k iterations)",
+                Font = new Font("Segoe UI", 8, FontStyle.Italic),
+                Location = new Point(20, 60),
+                Size = new Size(380, 20),
                 TextAlign = ContentAlignment.MiddleCenter,
-                ForeColor = Color.Gray
+                ForeColor = Color.FromArgb(150, 150, 170)
             };
             
             // Operator ID
             lblOperatorId = new Label
             {
                 Text = "Operator ID:",
-                Location = new Point(40, 90),
-                Size = new Size(100, 20)
+                Location = new Point(50, 105),
+                Size = new Size(100, 20),
+                ForeColor = Color.FromArgb(200, 200, 220),
+                Font = new Font("Segoe UI", 10)
             };
             
             txtOperatorId = new TextBox
             {
-                Location = new Point(150, 87),
-                Size = new Size(200, 20),
-                Font = new Font("Arial", 10)
+                Location = new Point(160, 102),
+                Size = new Size(210, 25),
+                Font = new Font("Consolas", 10),
+                BackColor = Color.FromArgb(50, 50, 60),
+                ForeColor = Color.White,
+                BorderStyle = BorderStyle.FixedSingle
             };
             
             // Passphrase
             lblPassphrase = new Label
             {
                 Text = "Passphrase:",
-                Location = new Point(40, 130),
-                Size = new Size(100, 20)
+                Location = new Point(50, 145),
+                Size = new Size(100, 20),
+                ForeColor = Color.FromArgb(200, 200, 220),
+                Font = new Font("Segoe UI", 10)
             };
             
             txtPassphrase = new TextBox
             {
-                Location = new Point(150, 127),
-                Size = new Size(200, 20),
+                Location = new Point(160, 142),
+                Size = new Size(210, 25),
                 UseSystemPasswordChar = true,
-                Font = new Font("Arial", 10)
+                Font = new Font("Consolas", 10),
+                BackColor = Color.FromArgb(50, 50, 60),
+                ForeColor = Color.White,
+                BorderStyle = BorderStyle.FixedSingle
             };
             
-            // Login button
+            // Login button with modern flat design
             btnLogin = new Button
             {
-                Text = "Login",
-                Location = new Point(150, 170),
-                Size = new Size(100, 30),
-                BackColor = Color.Green,
+                Text = "🔓 Login",
+                Location = new Point(160, 190),
+                Size = new Size(110, 35),
+                BackColor = Color.FromArgb(0, 150, 136),
                 ForeColor = Color.White,
-                Font = new Font("Arial", 10, FontStyle.Bold)
+                Font = new Font("Segoe UI", 11, FontStyle.Bold),
+                FlatStyle = FlatStyle.Flat
             };
+            btnLogin.FlatAppearance.BorderSize = 0;
             btnLogin.Click += BtnLogin_Click;
             
             // Cancel button
             btnCancel = new Button
             {
-                Text = "Cancel",
-                Location = new Point(260, 170),
-                Size = new Size(90, 30),
+                Text = "✖ Cancel",
+                Location = new Point(280, 190),
+                Size = new Size(90, 35),
+                BackColor = Color.FromArgb(150, 50, 50),
+                ForeColor = Color.White,
+                Font = new Font("Segoe UI", 10, FontStyle.Bold),
+                FlatStyle = FlatStyle.Flat,
                 DialogResult = DialogResult.Cancel
             };
+            btnCancel.FlatAppearance.BorderSize = 0;
             
             // Add controls
             this.Controls.AddRange(new Control[] {
