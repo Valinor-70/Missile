@@ -1,5 +1,6 @@
 using System;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
 
 namespace MissileSimulator
@@ -96,8 +97,10 @@ namespace MissileSimulator
                 BackColor = Color.Black,
                 ForeColor = Color.FromArgb(255, 255, 0),
                 Font = new Font("Consolas", 12, FontStyle.Bold),
-                BorderStyle = BorderStyle.FixedSingle
+                BorderStyle = BorderStyle.FixedSingle,
+                MaxLength = 11 // XXX-XX-XXX = 11 chars with dashes
             };
+            txtAuthCode.TextChanged += TxtAuthCode_TextChanged;
             grpAuth.Controls.Add(txtAuthCode);
             
             btnVerify = new Button
@@ -177,6 +180,35 @@ namespace MissileSimulator
                 
                 MessageBox.Show($"AUTHORIZATION DENIED\n\nExpected: {RequiredAuthCode}\nEntered: {entered}",
                     "ACCESS DENIED", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+        
+        private void TxtAuthCode_TextChanged(object sender, EventArgs e)
+        {
+            // Auto-format with dashes: XXX-XX-XXX
+            string text = txtAuthCode.Text.Replace("-", ""); // Remove existing dashes
+            
+            // Only allow digits
+            text = new string(text.Where(char.IsDigit).ToArray());
+            
+            // Add dashes at appropriate positions
+            if (text.Length > 5)
+            {
+                text = text.Substring(0, 3) + "-" + text.Substring(3, 2) + "-" + text.Substring(5);
+            }
+            else if (text.Length > 3)
+            {
+                text = text.Substring(0, 3) + "-" + text.Substring(3);
+            }
+            
+            // Update textbox if changed
+            if (txtAuthCode.Text != text)
+            {
+                int cursorPos = txtAuthCode.SelectionStart;
+                txtAuthCode.TextChanged -= TxtAuthCode_TextChanged; // Prevent recursion
+                txtAuthCode.Text = text;
+                txtAuthCode.SelectionStart = Math.Min(cursorPos + (text.Length > txtAuthCode.Text.Length ? 1 : 0), text.Length);
+                txtAuthCode.TextChanged += TxtAuthCode_TextChanged;
             }
         }
         

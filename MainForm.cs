@@ -117,7 +117,6 @@ namespace MissileSimulator
                                     launchForm.DamageZones = profile.Zones;
                                     launchForm.WeaponYield = profile.YieldMT;
                                     
-                                    launchForm.Show();
                                     launchForm.StartLaunchSequence();
                                     launchForm.ShowDialog();
                                 }
