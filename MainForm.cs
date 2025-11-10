@@ -50,6 +50,11 @@ namespace MissileSimulator
         private TextBox txtAuthCode;
         private Button btnVerifyAuth;
         
+        // Launch base selection
+        private ComboBox cmbLaunchBase;
+        private string currentLaunchBase;
+        private List<string> launchBases;
+        
         // Control key widget
         private Panel pnlControlKey;
         private float keyRotation = 0f;
@@ -73,8 +78,10 @@ namespace MissileSimulator
         private byte[] decryptionKey;
         private string encryptedPayload;
         private string currentMissileId;
+        private string currentMissileName;
         private HashSet<string> validAuthCodes;
         private string requiredAuthCode;
+        private int missileCounter = 1;
         
         public MainForm(string sessionToken, string operatorId)
         {
@@ -82,6 +89,7 @@ namespace MissileSimulator
             this.operatorId = operatorId;
             
             animatedCircles = new List<AnimatedCircle>();
+            InitializeLaunchBases();
             InitializeEventProfiles();
             LoadAuthCodes();
             
@@ -94,14 +102,26 @@ namespace MissileSimulator
             LogToConsole("Authentication codes generated: AuthCodes.txt");
         }
         
+        private void InitializeLaunchBases()
+        {
+            launchBases = new List<string>
+            {
+                "ALPHA", "BRAVO", "CHARLIE", "DELTA", "ECHO",
+                "FOXTROT", "GOLF", "HOTEL", "INDIA", "JULIET"
+            };
+            currentLaunchBase = launchBases[0];
+        }
+        
         private void InitializeEventProfiles()
         {
-            // Define event profiles with multiple realistic damage/fallout zones
+            // Define event profiles with realistic damage zones based on actual nuclear weapon data
+            // Thermonuclear is based on 10.4MT yield
             eventProfiles = new Dictionary<string, EventProfile>
             {
                 ["Conventional"] = new EventProfile
                 {
                     Name = "Conventional",
+                    YieldMT = 0.0001, // Approximate
                     Zones = new List<DamageZone>
                     {
                         new DamageZone { Radius = 0.3, Color = Color.FromArgb(200, 255, 0, 0), Label = "Direct Impact" },
@@ -117,41 +137,51 @@ namespace MissileSimulator
                 ["Nuclear"] = new EventProfile
                 {
                     Name = "Nuclear",
+                    YieldMT = 0.5,
                     Zones = new List<DamageZone>
                     {
                         new DamageZone { Radius = 0.8, Color = Color.FromArgb(220, 255, 255, 0), Label = "Fireball" },
-                        new DamageZone { Radius = 2.5, Color = Color.FromArgb(200, 255, 0, 0), Label = "20 PSI Zone - Total Destruction" },
-                        new DamageZone { Radius = 4.5, Color = Color.FromArgb(150, 255, 100, 0), Label = "10 PSI Zone - Heavy Damage" },
-                        new DamageZone { Radius = 8.0, Color = Color.FromArgb(120, 255, 150, 0), Label = "5 PSI Zone - Moderate Damage" },
-                        new DamageZone { Radius = 12.0, Color = Color.FromArgb(80, 200, 200, 0), Label = "Thermal Radiation" }
+                        new DamageZone { Radius = 2.5, Color = Color.FromArgb(200, 255, 0, 0), Label = "20 PSI - Total Destruction" },
+                        new DamageZone { Radius = 4.5, Color = Color.FromArgb(150, 255, 100, 0), Label = "10 PSI - Heavy Damage" },
+                        new DamageZone { Radius = 8.0, Color = Color.FromArgb(120, 255, 150, 0), Label = "5 PSI - Moderate Damage" },
+                        new DamageZone { Radius = 12.0, Color = Color.FromArgb(80, 200, 200, 0), Label = "1 PSI - Light Damage" }
                     },
                     InnerRadius = 0.8,
                     OuterRadius = 12.0,
                     InnerColor = Color.FromArgb(220, 255, 255, 0),
                     OuterColor = Color.FromArgb(80, 200, 200, 0),
-                    Label = "Fireball / PSI Zones / Thermal"
+                    Label = "Fireball / PSI Zones / Light Damage"
                 },
                 ["Thermonuclear"] = new EventProfile
                 {
                     Name = "Thermonuclear",
+                    YieldMT = 10.4, // Based on realistic 10.4MT data
                     Zones = new List<DamageZone>
                     {
-                        new DamageZone { Radius = 2.0, Color = Color.FromArgb(240, 255, 255, 100), Label = "Fireball" },
-                        new DamageZone { Radius = 6.0, Color = Color.FromArgb(220, 255, 0, 0), Label = "20 PSI - Vaporization" },
-                        new DamageZone { Radius = 10.0, Color = Color.FromArgb(180, 255, 50, 0), Label = "10 PSI - Total Destruction" },
-                        new DamageZone { Radius = 16.0, Color = Color.FromArgb(140, 255, 100, 0), Label = "5 PSI - Heavy Damage" },
-                        new DamageZone { Radius = 25.0, Color = Color.FromArgb(100, 255, 150, 50), Label = "Thermal Burns" },
-                        new DamageZone { Radius = 40.0, Color = Color.FromArgb(70, 150, 150, 100), Label = "Fallout Zone" }
+                        // Realistic 10.4MT zones from provided data
+                        new DamageZone { Radius = 0.421, Color = Color.FromArgb(240, 150, 0, 0), Label = "Crater (421m)" },
+                        new DamageZone { Radius = 0.72, Color = Color.FromArgb(230, 200, 0, 0), Label = "3000 PSI - Silo Hardened" },
+                        new DamageZone { Radius = 1.76, Color = Color.FromArgb(220, 255, 0, 0), Label = "200 PSI - Extreme Damage" },
+                        new DamageZone { Radius = 3.22, Color = Color.FromArgb(200, 255, 100, 255), Label = "1000 rem - Fatal Radiation" },
+                        new DamageZone { Radius = 3.4, Color = Color.FromArgb(180, 200, 150, 255), Label = "500 rem - Likely Fatal" },
+                        new DamageZone { Radius = 3.57, Color = Color.FromArgb(240, 255, 255, 100), Label = "Fireball - Vaporization" },
+                        new DamageZone { Radius = 3.78, Color = Color.FromArgb(160, 150, 200, 255), Label = "100 rem - Radiation Sickness" },
+                        new DamageZone { Radius = 4.75, Color = Color.FromArgb(200, 255, 50, 0), Label = "20 PSI - Heavy Blast Damage" },
+                        new DamageZone { Radius = 9.99, Color = Color.FromArgb(150, 255, 100, 0), Label = "5 PSI - Moderate Blast Damage" },
+                        new DamageZone { Radius = 25.7, Color = Color.FromArgb(120, 255, 150, 50), Label = "1 PSI - Light Blast Damage" },
+                        new DamageZone { Radius = 29.1, Color = Color.FromArgb(100, 255, 200, 100), Label = "3rd Degree Burns" },
+                        new DamageZone { Radius = 63.1, Color = Color.FromArgb(60, 200, 200, 150), Label = "Thermal Radiation Boundary" }
                     },
-                    InnerRadius = 2.0,
-                    OuterRadius = 40.0,
-                    InnerColor = Color.FromArgb(240, 255, 255, 100),
-                    OuterColor = Color.FromArgb(70, 150, 150, 100),
-                    Label = "Fireball / PSI Zones / Thermal / Fallout"
+                    InnerRadius = 0.421,
+                    OuterRadius = 63.1,
+                    InnerColor = Color.FromArgb(240, 150, 0, 0),
+                    OuterColor = Color.FromArgb(60, 200, 200, 150),
+                    Label = "10.4MT: Crater to Thermal Boundary"
                 },
                 ["Thaumonuclear"] = new EventProfile
                 {
                     Name = "Thaumonuclear",
+                    YieldMT = 50.0, // Fictional extreme yield
                     Zones = new List<DamageZone>
                     {
                         new DamageZone { Radius = 5.0, Color = Color.FromArgb(240, 200, 0, 255), Label = "Reality Breach" },
@@ -195,6 +225,7 @@ namespace MissileSimulator
         {
             this.Text = "Missile Simulator";
             this.Size = new Size(1400, 900);
+            this.MinimumSize = new Size(1200, 800); // Set minimum size for scaling
             this.StartPosition = FormStartPosition.CenterScreen;
             this.BackColor = Color.FromArgb(20, 20, 30); // Dark theme
             
@@ -203,7 +234,8 @@ namespace MissileSimulator
             {
                 Location = new Point(0, 0),
                 Size = new Size(1000, 850),
-                Dock = DockStyle.None
+                Dock = DockStyle.Left,
+                Anchor = AnchorStyles.Left | AnchorStyles.Top | AnchorStyles.Bottom
             };
             
             // Control panel on the right with modern dark theme
@@ -213,14 +245,15 @@ namespace MissileSimulator
                 Size = new Size(384, 850),
                 BackColor = Color.FromArgb(30, 30, 40),
                 BorderStyle = BorderStyle.None,
-                AutoScroll = true
+                AutoScroll = true,
+                Dock = DockStyle.Right
             };
             
             InitializeControlPanel();
             
             // Add to form
-            this.Controls.Add(mapControl);
-            this.Controls.Add(controlPanel);
+            this.Controls.Add(controlPanel); // Add control panel first so it docks right
+            this.Controls.Add(mapControl); // Map fills the rest
             
             // Animation timer
             animationTimer = new System.Windows.Forms.Timer { Interval = 50 }; // 20 FPS
@@ -345,27 +378,77 @@ namespace MissileSimulator
             controlPanel.Controls.Add(grpControlKey);
             y += 135;
             
+            // Launch base selection
+            var grpLaunchBase = new GroupBox
+            {
+                Text = "━━━ LAUNCH FACILITY ━━━",
+                Location = new Point(10, y),
+                Size = new Size(360, 70),
+                ForeColor = Color.FromArgb(200, 200, 220),
+                Font = new Font("Courier New", 8, FontStyle.Bold)
+            };
+            
+            grpLaunchBase.Controls.Add(new Label
+            {
+                Text = "BASE:",
+                Location = new Point(10, 28),
+                Size = new Size(50, 20),
+                ForeColor = Color.FromArgb(180, 180, 200),
+                Font = new Font("Consolas", 9)
+            });
+            
+            cmbLaunchBase = new ComboBox
+            {
+                Location = new Point(65, 26),
+                Size = new Size(275, 23),
+                DropDownStyle = ComboBoxStyle.DropDownList,
+                BackColor = Color.Black,
+                ForeColor = Color.FromArgb(0, 255, 100),
+                FlatStyle = FlatStyle.Flat,
+                Font = new Font("Consolas", 9, FontStyle.Bold)
+            };
+            cmbLaunchBase.Items.AddRange(launchBases.ToArray());
+            cmbLaunchBase.SelectedIndex = 0;
+            cmbLaunchBase.SelectedIndexChanged += (s, e) => {
+                currentLaunchBase = cmbLaunchBase.SelectedItem?.ToString() ?? "ALPHA";
+                LogToConsole($">>> LAUNCH BASE: {currentLaunchBase}");
+            };
+            grpLaunchBase.Controls.Add(cmbLaunchBase);
+            
+            controlPanel.Controls.Add(grpLaunchBase);
+            y += 75;
+            
             // Target coordinates
             var grpTarget = new GroupBox
             {
                 Text = "━━━ TARGET COORDINATES ━━━",
                 Location = new Point(10, y),
-                Size = new Size(360, 140),
+                Size = new Size(360, 165),
                 ForeColor = Color.FromArgb(200, 200, 220),
                 Font = new Font("Courier New", 8, FontStyle.Bold)
             };
             
+            grpTarget.Controls.Add(new Label
+            {
+                Text = "[CLICK MAP TO SELECT TARGET]",
+                Location = new Point(10, 25),
+                Size = new Size(340, 15),
+                ForeColor = Color.FromArgb(100, 255, 100),
+                Font = new Font("Consolas", 7),
+                TextAlign = ContentAlignment.MiddleCenter
+            });
+            
             grpTarget.Controls.Add(new Label 
             { 
                 Text = "LAT:", 
-                Location = new Point(10, 25), 
+                Location = new Point(10, 48), 
                 Size = new Size(40, 20),
                 ForeColor = Color.FromArgb(180, 180, 200),
                 Font = new Font("Consolas", 9)
             });
             txtLatitude = new TextBox 
             { 
-                Location = new Point(55, 23), 
+                Location = new Point(55, 46), 
                 Size = new Size(285, 20), 
                 Text = "40.7128",
                 BackColor = Color.Black,
@@ -378,14 +461,14 @@ namespace MissileSimulator
             grpTarget.Controls.Add(new Label 
             { 
                 Text = "LONG:", 
-                Location = new Point(10, 55), 
+                Location = new Point(10, 78), 
                 Size = new Size(40, 20),
                 ForeColor = Color.FromArgb(180, 180, 200),
                 Font = new Font("Consolas", 9)
             });
             txtLongitude = new TextBox 
             { 
-                Location = new Point(55, 53), 
+                Location = new Point(55, 76), 
                 Size = new Size(285, 20), 
                 Text = "-74.0060",
                 BackColor = Color.Black,
@@ -398,14 +481,14 @@ namespace MissileSimulator
             grpTarget.Controls.Add(new Label 
             { 
                 Text = "SCALE:", 
-                Location = new Point(10, 85), 
+                Location = new Point(10, 108), 
                 Size = new Size(50, 20),
                 ForeColor = Color.FromArgb(180, 180, 200),
                 Font = new Font("Consolas", 9)
             });
             txtRadius = new TextBox 
             { 
-                Location = new Point(65, 83), 
+                Location = new Point(65, 106), 
                 Size = new Size(60, 20), 
                 Text = "5",
                 BackColor = Color.Black,
@@ -418,7 +501,7 @@ namespace MissileSimulator
             grpTarget.Controls.Add(new Label 
             { 
                 Text = "km", 
-                Location = new Point(130, 85), 
+                Location = new Point(130, 108), 
                 Size = new Size(30, 20),
                 ForeColor = Color.FromArgb(150, 150, 170),
                 Font = new Font("Consolas", 9)
@@ -427,7 +510,7 @@ namespace MissileSimulator
             btnPlotEvent = new Button 
             { 
                 Text = "[PLOT TARGET]", 
-                Location = new Point(10, 110), 
+                Location = new Point(10, 133), 
                 Size = new Size(110, 25),
                 BackColor = Color.FromArgb(100, 0, 0),
                 ForeColor = Color.FromArgb(255, 200, 200),
@@ -441,7 +524,7 @@ namespace MissileSimulator
             btnLoadCSV = new Button 
             { 
                 Text = "[LOAD DATA]", 
-                Location = new Point(125, 110), 
+                Location = new Point(125, 133), 
                 Size = new Size(110, 25),
                 BackColor = Color.FromArgb(0, 50, 100),
                 ForeColor = Color.FromArgb(200, 220, 255),
@@ -455,7 +538,7 @@ namespace MissileSimulator
             btnClearMap = new Button 
             { 
                 Text = "[CLEAR]", 
-                Location = new Point(240, 110), 
+                Location = new Point(240, 133), 
                 Size = new Size(100, 25),
                 BackColor = Color.FromArgb(60, 60, 60),
                 ForeColor = Color.FromArgb(180, 180, 180),
@@ -467,7 +550,7 @@ namespace MissileSimulator
             grpTarget.Controls.Add(btnClearMap);
             
             controlPanel.Controls.Add(grpTarget);
-            y += 145;
+            y += 170;
             
             // Weapon selection in SCP style
             var grpWeapon = new GroupBox
@@ -699,6 +782,9 @@ namespace MissileSimulator
                 mapControl.MouseWheelZoomEnabled = true;
                 mapControl.MouseWheelZoomType = GMap.NET.MouseWheelZoomType.MousePositionWithoutCenter;
                 
+                // Add click handler for map
+                mapControl.MouseClick += MapControl_MouseClick;
+                
                 // Performance settings
                 mapControl.MaxZoom = 18;
                 mapControl.MinZoom = 2;
@@ -716,6 +802,18 @@ namespace MissileSimulator
             {
                 LogToConsole($"Map initialization warning: {ex.Message}");
                 // Continue anyway - map may still work
+            }
+        }
+        
+        private void MapControl_MouseClick(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+                // Convert screen coordinates to geographic coordinates
+                var point = mapControl.FromLocalToLatLng(e.X, e.Y);
+                txtLatitude.Text = point.Lat.ToString("F6");
+                txtLongitude.Text = point.Lng.ToString("F6");
+                LogToConsole($">>> TARGET SELECTED: {point.Lat:F6}, {point.Lng:F6}");
             }
         }
         
@@ -878,6 +976,24 @@ namespace MissileSimulator
             LogToConsole("Map cleared");
         }
         
+        private string GenerateMissileName()
+        {
+            string[] prefixes = { "EAGLE", "FALCON", "HAWK", "RAVEN", "PHOENIX", "CONDOR", "OSPREY", "SPARROW", "VIPER", "COBRA" };
+            string[] suffixes = { "ALPHA", "BETA", "GAMMA", "DELTA", "SIGMA", "OMEGA", "PRIME", "ULTIMA", "NOVA", "APEX" };
+            var rand = new Random();
+            return $"{prefixes[rand.Next(prefixes.Length)]}-{suffixes[rand.Next(suffixes.Length)]}";
+        }
+        
+        private string GenerateLaunchCode(string baseId, int missileNum)
+        {
+            // Format: BASEID-XXX-XXXX-XXX
+            var rand = new Random();
+            int part1 = rand.Next(100, 1000);
+            int part2 = rand.Next(1000, 10000);
+            int part3 = rand.Next(100, 1000);
+            return $"{baseId}-{part1:D3}-{part2:D4}-{part3:D3}";
+        }
+        
         private void BtnEncrypt_Click(object sender, EventArgs e)
         {
             try
@@ -891,21 +1007,36 @@ namespace MissileSimulator
                 double lat = double.Parse(txtLatitude.Text);
                 double lng = double.Parse(txtLongitude.Text);
                 
-                // Generate Missile ID
-                currentMissileId = $"{currentProfile.Name.ToUpper()}-{Math.Abs(lat):F2}*{Math.Abs(lng):F2}";
+                // Generate random missile name
+                currentMissileName = GenerateMissileName();
+                
+                // Generate Missile ID with new format: BASE-0XXX-TYPE-(PRODUCT OF LONG*LAT)-0XXXX
+                int baseNum = launchBases.IndexOf(currentLaunchBase) + 1;
+                long coordProduct = (long)(Math.Abs(lat * lng * 1000));
+                currentMissileId = $"{currentLaunchBase}-{missileCounter:D4}-{currentProfile.Name.ToUpper()}-{coordProduct}-{baseNum:D4}";
                 lblMissileId.Text = $"ID: [{currentMissileId}]";
+                
+                // Generate launch code hash following formula BASEID-XXX-XXXX-XXX
+                string launchCode = GenerateLaunchCode(currentLaunchBase, missileCounter);
                 
                 // Select random auth code
                 requiredAuthCode = validAuthCodes.ElementAt(new Random().Next(validAuthCodes.Count));
+                
+                // Increment missile counter
+                missileCounter++;
                 
                 // Create payload
                 var payload = new
                 {
                     @operator = operatorId,
                     @event = currentProfile.Name,
+                    launch_base = currentLaunchBase,
+                    missile_name = currentMissileName,
+                    missile_id = currentMissileId,
+                    launch_code = launchCode,
                     coords = new[] { lat, lng },
                     radius_km = double.Parse(txtRadius.Text),
-                    missile_id = currentMissileId,
+                    yield_mt = currentProfile.YieldMT,
                     auth_code = requiredAuthCode,
                     timestamp = DateTime.UtcNow.ToString("o")
                 };
@@ -921,11 +1052,12 @@ namespace MissileSimulator
                 encryptedPayload = Convert.ToBase64String(encrypted);
                 txtEncryptedData.Text = encryptedPayload.Substring(0, Math.Min(50, encryptedPayload.Length)) + "...";
                 
-                LogToConsole($">>> ENCRYPTED: ID [{currentMissileId}]");
-                LogToConsole($">>> REQUIRE AUTH: {requiredAuthCode}");
-                LogToConsole($">>> TIMESTAMP: {DateTime.Now:HH:mm:ss}");
+                LogToConsole($">>> MISSILE: {currentMissileName}");
+                LogToConsole($">>> ID: [{currentMissileId}]");
+                LogToConsole($">>> LAUNCH CODE: {launchCode}");
+                LogToConsole($">>> AUTH REQUIRED: {requiredAuthCode}");
                 
-                MessageBox.Show($"ENCRYPTION SUCCESSFUL\n\nID: [{currentMissileId}]\n\nAUTH CODE REQUIRED:\n{requiredAuthCode}\n\n(See AuthCodes.txt)",
+                MessageBox.Show($"ENCRYPTION SUCCESSFUL\n\nMISSILE: {currentMissileName}\nID: [{currentMissileId}]\nLAUNCH CODE: {launchCode}\n\nAUTH CODE REQUIRED:\n{requiredAuthCode}\n\n(See AuthCodes.txt)",
                     "SCP PROTOCOL", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
             catch (Exception ex)
@@ -1266,6 +1398,7 @@ namespace MissileSimulator
     public class EventProfile
     {
         public string Name { get; set; }
+        public double YieldMT { get; set; } // Yield in megatons
         public double InnerRadius { get; set; } // km
         public double OuterRadius { get; set; } // km
         public Color InnerColor { get; set; }
