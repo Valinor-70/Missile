@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
@@ -24,12 +25,19 @@ namespace MissileSimulator
         private const int MISSILE_ANIMATION_STEPS = 50;
         private int detonationZoneIndex = 0;
         
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public double TargetLat { get; set; }
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public double TargetLng { get; set; }
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public string LaunchBase { get; set; } = string.Empty;
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public string MissileId { get; set; } = string.Empty;
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public string MissileName { get; set; } = string.Empty;
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public List<DamageZone> DamageZones { get; set; } = new List<DamageZone>();
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public double WeaponYield { get; set; }
         
         private PointLatLng baseLoc;

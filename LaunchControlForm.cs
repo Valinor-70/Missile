@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Windows.Forms;
@@ -16,8 +17,11 @@ namespace MissileSimulator
         private bool isDraggingKey = false;
         private Point lastMousePos;
         
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public string MissileId { get; set; } = string.Empty;
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public string MissileName { get; set; } = string.Empty;
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public string LaunchBase { get; set; } = string.Empty;
         
         public bool LaunchConfirmed { get; private set; } = false;

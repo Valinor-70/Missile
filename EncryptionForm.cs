@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel;
 using System.Drawing;
 using System.Text;
 using System.Text.Json;
@@ -14,11 +15,17 @@ namespace MissileSimulator
         private Label lblTargetInfo;
         private Label lblMissileId;
         
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public string OperatorId { get; set; } = string.Empty;
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public double TargetLat { get; set; }
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public double TargetLng { get; set; }
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public string WeaponType { get; set; } = string.Empty;
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public string LaunchBase { get; set; } = string.Empty;
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public double WeaponYield { get; set; }
         
         public string MissileId { get; private set; }

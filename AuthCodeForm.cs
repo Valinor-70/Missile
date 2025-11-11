@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
@@ -12,8 +13,11 @@ namespace MissileSimulator
         private RichTextBox txtConsole;
         private Label lblMissileInfo;
         
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public string RequiredAuthCode { get; set; } = string.Empty;
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public string MissileId { get; set; } = string.Empty;
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public string MissileName { get; set; } = string.Empty;
         
         public AuthCodeForm()
