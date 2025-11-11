@@ -12,13 +12,16 @@ namespace MissileSimulator
         private RichTextBox txtConsole;
         private Label lblMissileInfo;
         
-        public string RequiredAuthCode { get; set; }
-        public string MissileId { get; set; }
-        public string MissileName { get; set; }
+        public string RequiredAuthCode { get; set; } = string.Empty;
+        public string MissileId { get; set; } = string.Empty;
+        public string MissileName { get; set; } = string.Empty;
         
         public AuthCodeForm()
         {
             InitializeComponent();
+            
+            // Apply modern composition effects
+            this.Load += (s, e) => CompositionHelper.ApplyModernStyle(this);
         }
         
         private void InitializeComponent()
@@ -26,37 +29,43 @@ namespace MissileSimulator
             this.Text = "STAGE 3: AUTHORIZATION";
             this.Size = new Size(600, 500);
             this.StartPosition = FormStartPosition.CenterScreen;
-            this.BackColor = Color.FromArgb(20, 20, 30);
+            this.BackColor = Color.FromArgb(10, 10, 15);
             this.FormBorderStyle = FormBorderStyle.FixedDialog;
             this.MaximizeBox = false;
             
             int y = 20;
             
-            // Header
-            var lblTitle = new Label
-            {
-                Text = "SCP FOUNDATION - AUTHORIZATION",
-                Font = new Font("Courier New", 12, FontStyle.Bold),
-                Location = new Point(20, y),
-                Size = new Size(560, 25),
-                TextAlign = ContentAlignment.MiddleCenter,
-                ForeColor = Color.White,
-                BackColor = Color.Black
-            };
-            this.Controls.Add(lblTitle);
-            y += 40;
+            // Modern Header with glow
+            var pnlHeader = CompositionHelper.CreateModernPanel(Color.FromArgb(5, 5, 10), withGlow: true);
+            pnlHeader.Location = new Point(20, y);
+            pnlHeader.Size = new Size(560, 60);
             
-            var lblStage = new Label
-            {
-                Text = "STAGE 3: ENTER AUTHORIZATION CODE",
-                Font = new Font("Courier New", 9, FontStyle.Bold),
-                Location = new Point(20, y),
-                Size = new Size(560, 20),
-                TextAlign = ContentAlignment.MiddleCenter,
-                ForeColor = Color.FromArgb(255, 200, 0)
-            };
-            this.Controls.Add(lblStage);
-            y += 35;
+            var lblTitle = CompositionHelper.CreateAnimatedLabel(
+                "███ SCP FOUNDATION - AUTHORIZATION ███",
+                new Font("Courier New", 11, FontStyle.Bold),
+                Color.FromArgb(255, 0, 0),
+                0
+            );
+            lblTitle.Location = new Point(10, 8);
+            lblTitle.Size = new Size(540, 22);
+            lblTitle.TextAlign = ContentAlignment.MiddleCenter;
+            pnlHeader.Controls.Add(lblTitle);
+            
+            var lblStage = CompositionHelper.CreateAnimatedLabel(
+                "STAGE 3: CODE VERIFICATION TERMINAL",
+                new Font("Courier New", 9, FontStyle.Bold),
+                Color.FromArgb(255, 200, 0),
+                200
+            );
+            lblStage.Location = new Point(10, 33);
+            lblStage.Size = new Size(540, 20);
+            lblStage.TextAlign = ContentAlignment.MiddleCenter;
+            pnlHeader.Controls.Add(lblStage);
+            
+            this.Controls.Add(pnlHeader);
+            y += 80;
+            this.Controls.Add(pnlHeader);
+            y += 80;
             
             // Missile info
             lblMissileInfo = new Label

@@ -28,6 +28,9 @@ namespace MissileSimulator
         {
             InitializeComponent();
             InitializeMap();
+            
+            // Apply modern composition effects
+            this.Load += (s, e) => CompositionHelper.ApplyModernStyle(this);
         }
         
         private void InitializeComponent()
@@ -36,7 +39,7 @@ namespace MissileSimulator
             this.Size = new Size(1400, 900);
             this.MinimumSize = new Size(1200, 800);
             this.StartPosition = FormStartPosition.CenterScreen;
-            this.BackColor = Color.FromArgb(20, 20, 30);
+            this.BackColor = Color.FromArgb(10, 10, 15); // Darker background
             
             // Map control
             mapControl = new GMapControl
@@ -46,76 +49,76 @@ namespace MissileSimulator
             };
             mapControl.MouseClick += MapControl_MouseClick;
             
-            // Control panel
-            controlPanel = new Panel
-            {
-                Dock = DockStyle.Right,
-                Size = new Size(384, 850),
-                BackColor = Color.FromArgb(30, 30, 40),
-                AutoScroll = true
-            };
+            // Modern control panel with gradient
+            controlPanel = CompositionHelper.CreateModernPanel(Color.FromArgb(20, 20, 30), withGlow: true);
+            controlPanel.Dock = DockStyle.Right;
+            controlPanel.Size = new Size(384, 850);
+            controlPanel.AutoScroll = true;
             
             InitializeControlPanel();
             
             this.Controls.Add(controlPanel);
             this.Controls.Add(mapControl);
+            
+            // Add scanline overlay for terminal effect
+            var scanlines = CompositionHelper.CreateScanlineOverlay();
+            this.Controls.Add(scanlines);
+            scanlines.BringToFront();
         }
         
         private void InitializeControlPanel()
         {
             int y = 10;
             
-            // Header
-            var pnlHeader = new Panel
-            {
-                Location = new Point(0, y),
-                Size = new Size(384, 60),
-                BackColor = Color.Black
-            };
+            // Modern Header with glow effect
+            var pnlHeader = CompositionHelper.CreateModernPanel(Color.FromArgb(10, 10, 10), withGlow: false);
+            pnlHeader.Location = new Point(0, y);
+            pnlHeader.Size = new Size(384, 80);
             
-            var lblTitle = new Label
-            {
-                Text = "SCP FOUNDATION",
-                Font = new Font("Courier New", 11, FontStyle.Bold),
-                Location = new Point(10, 5),
-                Size = new Size(364, 20),
-                TextAlign = ContentAlignment.MiddleCenter,
-                ForeColor = Color.White
-            };
+            var lblTitle = CompositionHelper.CreateAnimatedLabel(
+                "███ SCP FOUNDATION ███",
+                new Font("Courier New", 12, FontStyle.Bold),
+                Color.FromArgb(255, 0, 0),
+                0
+            );
+            lblTitle.Location = new Point(10, 8);
+            lblTitle.Size = new Size(364, 22);
+            lblTitle.TextAlign = ContentAlignment.MiddleCenter;
             pnlHeader.Controls.Add(lblTitle);
             
-            var lblSubtitle = new Label
-            {
-                Text = "STAGE 1: TARGET ACQUISITION",
-                Font = new Font("Courier New", 8, FontStyle.Regular),
-                Location = new Point(10, 25),
-                Size = new Size(364, 15),
-                TextAlign = ContentAlignment.MiddleCenter,
-                ForeColor = Color.FromArgb(200, 200, 200)
-            };
+            var lblSubtitle = CompositionHelper.CreateAnimatedLabel(
+                "STAGE 1: TARGET ACQUISITION PROTOCOL",
+                new Font("Courier New", 8, FontStyle.Regular),
+                Color.FromArgb(200, 200, 200),
+                200
+            );
+            lblSubtitle.Location = new Point(10, 32);
+            lblSubtitle.Size = new Size(364, 15);
+            lblSubtitle.TextAlign = ContentAlignment.MiddleCenter;
             pnlHeader.Controls.Add(lblSubtitle);
             
-            var lblClass = new Label
-            {
-                Text = "■ RIGHT-CLICK MAP TO SELECT ■",
-                Font = new Font("Courier New", 7, FontStyle.Bold),
-                Location = new Point(10, 42),
-                Size = new Size(364, 12),
-                TextAlign = ContentAlignment.MiddleCenter,
-                ForeColor = Color.FromArgb(100, 255, 100)
-            };
+            var lblClass = CompositionHelper.CreateAnimatedLabel(
+                "▸▸ RIGHT-CLICK MAP TO SELECT TARGET ◂◂",
+                new Font("Courier New", 7, FontStyle.Bold),
+                Color.FromArgb(100, 255, 100),
+                400
+            );
+            lblClass.Location = new Point(10, 52);
+            lblClass.Size = new Size(364, 12);
+            lblClass.TextAlign = ContentAlignment.MiddleCenter;
             pnlHeader.Controls.Add(lblClass);
+            CompositionHelper.ApplyGlitchEffect(lblClass);
             
             controlPanel.Controls.Add(pnlHeader);
-            y += 70;
+            y += 90;
             
-            // Target coordinates
+            // Target coordinates with modern styling
             var grpTarget = new GroupBox
             {
-                Text = "━━━ TARGET COORDINATES ━━━",
+                Text = "━━━━ TARGET COORDINATES ━━━━",
                 Location = new Point(10, y),
                 Size = new Size(360, 130),
-                ForeColor = Color.FromArgb(200, 200, 220),
+                ForeColor = Color.FromArgb(0, 200, 255),
                 Font = new Font("Courier New", 8, FontStyle.Bold)
             };
             
@@ -125,18 +128,13 @@ namespace MissileSimulator
                 Location = new Point(10, 28), 
                 Size = new Size(40, 20),
                 ForeColor = Color.FromArgb(180, 180, 200),
-                Font = new Font("Consolas", 9)
+                Font = new Font("Consolas", 9, FontStyle.Bold)
             });
-            txtLatitude = new TextBox 
-            { 
-                Location = new Point(55, 26), 
-                Size = new Size(285, 20), 
-                Text = "40.7128",
-                BackColor = Color.Black,
-                ForeColor = Color.FromArgb(0, 255, 0),
-                Font = new Font("Consolas", 10, FontStyle.Bold),
-                BorderStyle = BorderStyle.FixedSingle
-            };
+            
+            txtLatitude = CompositionHelper.CreateTerminalTextBox(Color.FromArgb(0, 255, 100));
+            txtLatitude.Location = new Point(55, 26);
+            txtLatitude.Size = new Size(285, 20);
+            txtLatitude.Text = "40.7128";
             grpTarget.Controls.Add(txtLatitude);
             
             grpTarget.Controls.Add(new Label 
@@ -145,32 +143,20 @@ namespace MissileSimulator
                 Location = new Point(10, 58), 
                 Size = new Size(40, 20),
                 ForeColor = Color.FromArgb(180, 180, 200),
-                Font = new Font("Consolas", 9)
+                Font = new Font("Consolas", 9, FontStyle.Bold)
             });
-            txtLongitude = new TextBox 
-            { 
-                Location = new Point(55, 56), 
-                Size = new Size(285, 20), 
-                Text = "-74.0060",
-                BackColor = Color.Black,
-                ForeColor = Color.FromArgb(0, 255, 0),
-                Font = new Font("Consolas", 10, FontStyle.Bold),
-                BorderStyle = BorderStyle.FixedSingle
-            };
+            
+            txtLongitude = CompositionHelper.CreateTerminalTextBox(Color.FromArgb(0, 255, 100));
+            txtLongitude.Location = new Point(55, 56);
+            txtLongitude.Size = new Size(285, 20);
+            txtLongitude.Text = "-74.0060";
             grpTarget.Controls.Add(txtLongitude);
             
-            btnConfirmTarget = new Button 
-            { 
-                Text = "[CONFIRM TARGET]", 
-                Location = new Point(10, 90), 
-                Size = new Size(330, 30),
-                BackColor = Color.FromArgb(100, 0, 0),
-                ForeColor = Color.FromArgb(255, 200, 200),
-                FlatStyle = FlatStyle.Flat,
-                Font = new Font("Courier New", 9, FontStyle.Bold)
-            };
-            btnConfirmTarget.FlatAppearance.BorderColor = Color.FromArgb(200, 0, 0);
+            btnConfirmTarget = CompositionHelper.CreateGlowButton("[CONFIRM TARGET]", Color.FromArgb(255, 0, 0));
+            btnConfirmTarget.Location = new Point(10, 90);
+            btnConfirmTarget.Size = new Size(330, 30);
             btnConfirmTarget.Click += BtnConfirmTarget_Click;
+            CompositionHelper.ApplyPulsingGlow(btnConfirmTarget, Color.Red);
             grpTarget.Controls.Add(btnConfirmTarget);
             
             controlPanel.Controls.Add(grpTarget);

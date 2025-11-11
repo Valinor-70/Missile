@@ -14,11 +14,11 @@ namespace MissileSimulator
         private Label lblTargetInfo;
         private Label lblMissileId;
         
-        public string OperatorId { get; set; }
+        public string OperatorId { get; set; } = string.Empty;
         public double TargetLat { get; set; }
         public double TargetLng { get; set; }
-        public string WeaponType { get; set; }
-        public string LaunchBase { get; set; }
+        public string WeaponType { get; set; } = string.Empty;
+        public string LaunchBase { get; set; } = string.Empty;
         public double WeaponYield { get; set; }
         
         public string MissileId { get; private set; }
@@ -34,6 +34,9 @@ namespace MissileSimulator
             this.OperatorId = operatorId;
             this.validAuthCodes = authCodes;
             InitializeComponent();
+            
+            // Apply modern composition effects
+            this.Load += (s, e) => CompositionHelper.ApplyModernStyle(this);
         }
         
         private void InitializeComponent()
@@ -41,37 +44,41 @@ namespace MissileSimulator
             this.Text = "STAGE 2: ENCRYPTION";
             this.Size = new Size(700, 600);
             this.StartPosition = FormStartPosition.CenterScreen;
-            this.BackColor = Color.FromArgb(20, 20, 30);
+            this.BackColor = Color.FromArgb(10, 10, 15);
             this.FormBorderStyle = FormBorderStyle.FixedDialog;
             this.MaximizeBox = false;
             
             int y = 20;
             
-            // Header
-            var lblTitle = new Label
-            {
-                Text = "SCP FOUNDATION - ENCRYPTION PROTOCOL",
-                Font = new Font("Courier New", 12, FontStyle.Bold),
-                Location = new Point(20, y),
-                Size = new Size(660, 25),
-                TextAlign = ContentAlignment.MiddleCenter,
-                ForeColor = Color.White,
-                BackColor = Color.Black
-            };
-            this.Controls.Add(lblTitle);
-            y += 40;
+            // Modern Header with animation
+            var pnlHeader = CompositionHelper.CreateModernPanel(Color.FromArgb(5, 5, 10), withGlow: true);
+            pnlHeader.Location = new Point(20, y);
+            pnlHeader.Size = new Size(660, 60);
             
-            var lblStage = new Label
-            {
-                Text = "STAGE 2: CLEARANCE VERIFICATION",
-                Font = new Font("Courier New", 9, FontStyle.Bold),
-                Location = new Point(20, y),
-                Size = new Size(660, 20),
-                TextAlign = ContentAlignment.MiddleCenter,
-                ForeColor = Color.FromArgb(255, 200, 0)
-            };
-            this.Controls.Add(lblStage);
-            y += 35;
+            var lblTitle = CompositionHelper.CreateAnimatedLabel(
+                "███ SCP FOUNDATION - ENCRYPTION PROTOCOL ███",
+                new Font("Courier New", 11, FontStyle.Bold),
+                Color.FromArgb(255, 0, 0),
+                0
+            );
+            lblTitle.Location = new Point(10, 8);
+            lblTitle.Size = new Size(640, 22);
+            lblTitle.TextAlign = ContentAlignment.MiddleCenter;
+            pnlHeader.Controls.Add(lblTitle);
+            
+            var lblStage = CompositionHelper.CreateAnimatedLabel(
+                "STAGE 2: CLEARANCE VERIFICATION REQUIRED",
+                new Font("Courier New", 9, FontStyle.Bold),
+                Color.FromArgb(255, 200, 0),
+                200
+            );
+            lblStage.Location = new Point(10, 33);
+            lblStage.Size = new Size(640, 20);
+            lblStage.TextAlign = ContentAlignment.MiddleCenter;
+            pnlHeader.Controls.Add(lblStage);
+            
+            this.Controls.Add(pnlHeader);
+            y += 80;
             
             // Target info
             lblTargetInfo = new Label

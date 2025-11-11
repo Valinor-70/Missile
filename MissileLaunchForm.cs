@@ -26,10 +26,10 @@ namespace MissileSimulator
         
         public double TargetLat { get; set; }
         public double TargetLng { get; set; }
-        public string LaunchBase { get; set; }
-        public string MissileId { get; set; }
-        public string MissileName { get; set; }
-        public List<DamageZone> DamageZones { get; set; }
+        public string LaunchBase { get; set; } = string.Empty;
+        public string MissileId { get; set; } = string.Empty;
+        public string MissileName { get; set; } = string.Empty;
+        public List<DamageZone> DamageZones { get; set; } = new List<DamageZone>();
         public double WeaponYield { get; set; }
         
         private PointLatLng baseLoc;
@@ -39,15 +39,18 @@ namespace MissileSimulator
         {
             InitializeComponent();
             InitializeMap();
+            
+            // Apply modern composition effects
+            this.Load += (s, e) => CompositionHelper.ApplyModernStyle(this);
         }
         
         private void InitializeComponent()
         {
-            this.Text = "STAGE 5: MISSILE LAUNCH";
+            this.Text = "STAGE 5: MISSILE LAUNCH & DETONATION";
             this.Size = new Size(1400, 900);
             this.MinimumSize = new Size(1200, 800);
             this.StartPosition = FormStartPosition.CenterScreen;
-            this.BackColor = Color.FromArgb(20, 20, 30);
+            this.BackColor = Color.FromArgb(10, 10, 15);
             this.FormClosing += MissileLaunchForm_FormClosing;
             
             // Map control
@@ -57,43 +60,56 @@ namespace MissileSimulator
                 Size = new Size(1000, 850)
             };
             
-            // Console panel
-            var consolePanel = new Panel
-            {
-                Dock = DockStyle.Right,
-                Size = new Size(384, 850),
-                BackColor = Color.FromArgb(30, 30, 40)
-            };
+            // Modern console panel with glow
+            var consolePanel = CompositionHelper.CreateModernPanel(Color.FromArgb(20, 20, 30), withGlow: true);
+            consolePanel.Dock = DockStyle.Right;
+            consolePanel.Size = new Size(384, 850);
             
-            var lblTitle = new Label
-            {
-                Text = "SCP FOUNDATION",
-                Font = new Font("Courier New", 11, FontStyle.Bold),
-                Location = new Point(10, 10),
-                Size = new Size(364, 20),
-                TextAlign = ContentAlignment.MiddleCenter,
-                ForeColor = Color.White,
-                BackColor = Color.Black
-            };
-            consolePanel.Controls.Add(lblTitle);
+            var pnlHeader = CompositionHelper.CreateModernPanel(Color.FromArgb(5, 5, 10), withGlow: false);
+            pnlHeader.Location = new Point(0, 10);
+            pnlHeader.Size = new Size(384, 70);
             
-            var lblStage = new Label
-            {
-                Text = "STAGE 5: LAUNCH & DETONATION",
-                Font = new Font("Courier New", 8, FontStyle.Regular),
-                Location = new Point(10, 35),
-                Size = new Size(364, 15),
-                TextAlign = ContentAlignment.MiddleCenter,
-                ForeColor = Color.FromArgb(255, 200, 0),
-                BackColor = Color.FromArgb(30, 30, 40)
-            };
-            consolePanel.Controls.Add(lblStage);
+            var lblTitle = CompositionHelper.CreateAnimatedLabel(
+                "███ SCP FOUNDATION ███",
+                new Font("Courier New", 11, FontStyle.Bold),
+                Color.FromArgb(255, 0, 0),
+                0
+            );
+            lblTitle.Location = new Point(10, 8);
+            lblTitle.Size = new Size(364, 20);
+            lblTitle.TextAlign = ContentAlignment.MiddleCenter;
+            pnlHeader.Controls.Add(lblTitle);
+            
+            var lblStage = CompositionHelper.CreateAnimatedLabel(
+                "STAGE 5: MISSILE FLIGHT & DETONATION",
+                new Font("Courier New", 8, FontStyle.Bold),
+                Color.FromArgb(255, 200, 0),
+                200
+            );
+            lblStage.Location = new Point(10, 32);
+            lblStage.Size = new Size(364, 18);
+            lblStage.TextAlign = ContentAlignment.MiddleCenter;
+            pnlHeader.Controls.Add(lblStage);
+            
+            var lblClass = CompositionHelper.CreateAnimatedLabel(
+                "▸▸ SEQUENTIAL DETONATION IN PROGRESS ◂◂",
+                new Font("Courier New", 7, FontStyle.Bold),
+                Color.FromArgb(255, 100, 100),
+                400
+            );
+            lblClass.Location = new Point(10, 50);
+            lblClass.Size = new Size(364, 12);
+            lblClass.TextAlign = ContentAlignment.MiddleCenter;
+            pnlHeader.Controls.Add(lblClass);
+            CompositionHelper.ApplyGlitchEffect(lblClass);
+            
+            consolePanel.Controls.Add(pnlHeader);
             
             var grpConsole = new GroupBox
             {
                 Text = "━━━ LAUNCH LOG ━━━",
-                Location = new Point(10, 60),
-                Size = new Size(360, 780),
+                Location = new Point(10, 90),
+                Size = new Size(360, 750),
                 ForeColor = Color.FromArgb(255, 100, 100),
                 Font = new Font("Courier New", 8, FontStyle.Bold)
             };
