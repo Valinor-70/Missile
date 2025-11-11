@@ -1,0 +1,30 @@
+## .NET artifacts
+bin/
+obj/
+*.dll
+*.exe
+*.pdb
+
+## User-specific files
+*.user
+*.suo
+*.cache
+
+## Build results
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+[Aa]rm/
+[Aa]rm64/
+
+## Visual Studio cache/options
+.vs/
+.vscode/
+
+## NuGet
+*.nupkg
+packages/
+
+## Runtime generated files
+AuthCodes.txt
