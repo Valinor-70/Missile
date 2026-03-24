@@ -31,5 +31,6 @@ public:
 private:
     EventPoint m_point;
     float      m_progress = 0.0f;
-    static constexpr float kSpeed = 0.015f; // ~66 frames total
+    // kSpeed = 0.015 → completes in 1/0.015 ≈ 67 frames × 16 ms ≈ 1.07 s
+    static constexpr float kSpeed = 0.015f;
 };

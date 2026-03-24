@@ -11,13 +11,17 @@ MapWidget::MapWidget(QWidget *parent)
     setMinimumSize(900, 900);
     setAutoFillBackground(false);
 
-    // 60 FPS animation timer
+    // ~60 FPS animation timer
+    static constexpr int kAnimationIntervalMs = 16;
     connect(&m_timer, &QTimer::timeout, this, &MapWidget::onAnimationTick);
-    m_timer.start(16);
+    m_timer.start(kAnimationIntervalMs);
 
     // Embed the control key in the centre of the map
     m_controlKey = new ControlKeyWidget(this);
-    m_controlKey->move((900 - 200) / 2, (900 - 200) / 2);
+    // Centre the key widget once the parent is resized; start with a sensible default
+    const int kw = m_controlKey->width();
+    const int kh = m_controlKey->height();
+    m_controlKey->move((900 - kw) / 2, (900 - kh) / 2);
 }
 
 void MapWidget::addEventPoint(const EventPoint &pt)

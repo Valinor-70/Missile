@@ -28,7 +28,8 @@ void ControlKeyWidget::mouseMoveEvent(QMouseEvent *event)
 {
     if (m_dragging) {
         int dx  = event->pos().x() - m_lastPos.x();
-        m_angle += dx * 0.5f;
+    static constexpr float kRotationSensitivity = 0.5f; // degrees per pixel of drag
+        m_angle += dx * kRotationSensitivity;
         m_angle  = qBound(0.0f, m_angle, 90.0f);
 
         if (m_angle >= 90.0f && !m_emitted) {

@@ -121,6 +121,8 @@ void MainWindow::setupUi()
     // ── Missile type ──────────────────────────────────────────────────────
     vl->addWidget(mkLabel(panel, "Missile Type:"));
     m_typeCombo = new QComboBox(panel);
+    // "Thaumonuclear" is an intentional fictional type used in this educational
+    // simulation (thaumaturgy + nuclear, for an exaggerated fantasy warhead tier).
     m_typeCombo->addItems({"Conventional", "Nuclear", "Thermonuclear", "Thaumonuclear"});
     m_typeCombo->setFixedHeight(30);
     vl->addWidget(m_typeCombo);
@@ -239,8 +241,11 @@ void MainWindow::onPlot()
     }
 
     QString type = m_typeCombo->currentText();
-    m_currentMissileId = QString("%1-%2").arg(type.toUpper())
-                             .arg(std::abs(lat * lng), 0, 'f', 2);
+    // Build a unique missile ID from type + both coordinates (formatted separately)
+    m_currentMissileId = QString("%1-%2_%3")
+                             .arg(type.toUpper())
+                             .arg(lat, 0, 'f', 4)
+                             .arg(lng, 0, 'f', 4);
     m_missileIdLabel->setText(m_currentMissileId);
 
     m_requiredLaunchCode =
