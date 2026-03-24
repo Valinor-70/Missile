@@ -1,0 +1,28 @@
+## Ignore build artifacts and IDE files
+
+# CMake / C++ build directories
+build/
+cmake-build-*/
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+Makefile
+*.o
+*.a
+
+# Qt-generated MOC / UIC files
+moc_*.cpp
+moc_*.h
+ui_*.h
+qrc_*.cpp
+
+# Compiled binary
+MissileSimulator
+
+# IDE folders
+.vscode/
+.idea/
+*.user
+
+# Windows image file caches (if ever on Windows)
+Thumbs.db
